@@ -7,7 +7,7 @@ import dlib
 
 class_to_label = {0: 'angry', 1: 'disgusted', 2: 'fearful', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprised'}
 
-emotion_model = load_model('./saved_models/model.h5')
+emotion_model = load_model('../saved_models/model.h5')
 
 IMG_SIZE = 96
 
