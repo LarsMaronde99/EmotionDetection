@@ -5,9 +5,27 @@ import time
 
 import dlib
 
+
+def prediction_percent_str(prediction):
+  return str(prediction[0]) + ": " + "{:.2f}".format(prediction[1] * 100) + "%"
+
+def emotion_to_color(emotion):
+    color_mapping = {
+        'angry': (0, 0, 255),    # Red
+        'happy': (0, 255, 0),    # Green
+        'sad': (255, 0, 0),      # Blue
+        'surprised': (255, 255, 0),  # Yellow
+        'neutral': (128, 128, 128),  # Gray
+        'disgusted': (255, 255, 255), # White
+        'fearful': (255, 255, 255), # White
+    }
+    return color_mapping.get(emotion, (255, 255, 255))
+
+
+
 class_to_label = {0: 'angry', 1: 'disgusted', 2: 'fearful', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprised'}
 
-emotion_model = load_model('../saved_models/model.h5')
+emotion_model = load_model('../saved_models/model_1.h5')
 
 IMG_SIZE = 96
 
@@ -26,6 +44,7 @@ while True:
   faces = dlib_detector(frame)
 
   for face in faces:
+    
     # Extract face coordinates
     x, y, w, h = face.left(), face.top(), face.width(), face.height()
     
@@ -38,13 +57,18 @@ while True:
 
     prediction = emotion_model.predict(np.array([face_roi]))
     
+    top_n_indices = np.argsort(prediction[0])[::-1][:3]
+    # Retrieve the top N predictions and their corresponding probabilities
+    top_n_predictions = [(class_to_label[i], prediction[0][i]) for i in top_n_indices]
     predicted_emotion = class_to_label[np.argmax(prediction)]
 
     # Draw bounding box around the face
-    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    cv2.rectangle(frame, (x, y), (x+w, y+h), emotion_to_color(top_n_predictions[0][0]), 2)
 
     # Display the predicted emotion above the box
-    cv2.putText(frame, predicted_emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+    cv2.putText(frame, prediction_percent_str(top_n_predictions[0]), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9,emotion_to_color(top_n_predictions[0][0]), 2)
+    cv2.putText(frame, prediction_percent_str(top_n_predictions[1]), (x , y - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+    cv2.putText(frame, prediction_percent_str(top_n_predictions[2]), (x, y - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
 
   # Display the resulting frame
   cv2.imshow('Emotion Detection', frame)
@@ -55,3 +79,12 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
+
