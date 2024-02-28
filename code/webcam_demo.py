@@ -16,16 +16,15 @@ def emotion_to_color(emotion):
         'sad': (255, 0, 0),      # Blue
         'surprised': (255, 255, 0),  # Yellow
         'neutral': (128, 128, 128),  # Gray
-        'disgusted': (255, 255, 255), # White
         'fearful': (255, 255, 255), # White
     }
     return color_mapping.get(emotion, (255, 255, 255))
 
 
 
-class_to_label = {0: 'angry', 1: 'disgusted', 2: 'fearful', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprised'}
+class_to_label = {0: 'angry', 1: 'fearful', 2: 'happy', 3: 'neutral', 4: 'sad', 5: 'surprised'}
 
-emotion_model = load_model('../saved_models/model_1.h5')
+emotion_model = load_model('../saved_models/basicCNN/basicCNN_50_32-1.h5')
 
 IMG_SIZE = 96
 
@@ -36,8 +35,7 @@ dlib_detector = dlib.get_frontal_face_detector()
 cap = cv2.VideoCapture(0)
 frame_counter = 0
 
-while True:
-    
+def predict_emotions():
   ret, frame = cap.read()
 
   # detect all faces in the picture
@@ -69,10 +67,15 @@ while True:
     cv2.putText(frame, prediction_percent_str(top_n_predictions[0]), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9,emotion_to_color(top_n_predictions[0][0]), 2)
     cv2.putText(frame, prediction_percent_str(top_n_predictions[1]), (x , y - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
     cv2.putText(frame, prediction_percent_str(top_n_predictions[2]), (x, y - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
-
   # Display the resulting frame
   cv2.imshow('Emotion Detection', frame)
 
+
+while True:
+  try:
+    predict_emotions()    
+  except Exception as e:
+    continue
   # Break the loop if 'q' is pressed
   if cv2.waitKey(1) & 0xFF == ord('q'):
     break
