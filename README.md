@@ -23,6 +23,5 @@ Our trained models are stored in ```saved_models```:
 - ```improved_deepCNN_1.h5```: model trained without disgusted class
 - ```improved_deepCNN_2.h5```: model trained without disgusted class and without FER-2013 dataset
 
-
-You can choose a different model for the Webcam Demo Application by changing the filepath in line 27 in webcam_demo.py
+You can select a different model for the applications by changing the file path in line 27 in webcam_demo.py or line 26 in classify_picture.py.
 
