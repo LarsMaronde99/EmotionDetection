@@ -21,9 +21,9 @@ def emotion_to_color(emotion):
     }
     return color_mapping.get(emotion, (255, 255, 255))
 
-class_to_label = {0: 'angry', 1: 'disgusted', 2: 'fearful', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprised'}
+class_to_label = {0: 'angry', 1: 'fearful', 2: 'happy', 3: 'neutral', 4: 'sad', 5: 'surprised'}
 
-emotion_model = load_model('../saved_models/model_1.h5')
+emotion_model = load_model('../saved_models/new_basicCNN_100_32-1.h5')
 IMG_SIZE = 96
 dlib_detector = dlib.get_frontal_face_detector()
 
@@ -39,14 +39,10 @@ def analyze_image(file_path):
         face_roi = np.reshape(face_roi, (IMG_SIZE, IMG_SIZE, 1))
         face_roi = np.array(face_roi) / 255.0
         prediction = emotion_model.predict(np.array([face_roi]))
-        top_n_indices = np.argsort(prediction[0])[::-1][:3]
-        top_n_predictions = [(class_to_label[i], prediction[0][i]) for i in top_n_indices]
         predicted_emotion = class_to_label[np.argmax(prediction)]
-        cv2.rectangle(frame, (x, y), (x+w, y+h), emotion_to_color(top_n_predictions[0][0]), 2)
-        cv2.putText(frame, prediction_percent_str(top_n_predictions[0]), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9,emotion_to_color(top_n_predictions[0][0]), 2)
-        cv2.putText(frame, prediction_percent_str(top_n_predictions[1]), (x , y - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
-        cv2.putText(frame, prediction_percent_str(top_n_predictions[2]), (x, y - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
-    return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+        cv2.rectangle(frame, (x, y), (x+w, y+h), emotion_to_color(predicted_emotion), thickness=2)
+        cv2.putText(frame, predicted_emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1,emotion_to_color(predicted_emotion), 2)
+    return Image.fromarray(frame)
 
 def choose_image():
     root = Tk()
@@ -63,3 +59,4 @@ def choose_image():
 
 if __name__ == "__main__":
     choose_image()
+ 
