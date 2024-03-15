@@ -17,6 +17,12 @@ Start the program with ```python classify_picture.py```. You can chose a picture
 
 # Models
 
-Our trained models are stored in ```saved_models```. The name follows the schme 
-```<Type of Network>_<Epoch size>_<Batch size>.h5```. You can choose a different model for the Webcam Demo Application by changing the filepath in line 27 in webcam_demo.py
+Our trained models are stored in ```saved_models```:
+
+- ```deepCNN.h5```: first trained model with 7 classes
+- ```improved_deepCNN_1.h5```: model trained without disgusted class
+- ```improved_deepCNN_2.h5```: model trained without disgusted class and without FER-2013 dataset
+
+
+You can choose a different model for the Webcam Demo Application by changing the filepath in line 27 in webcam_demo.py
 
