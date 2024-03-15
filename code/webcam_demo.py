@@ -20,11 +20,13 @@ def emotion_to_color(emotion):
     }
     return color_mapping.get(emotion, (255, 255, 255))
 
-
-
 class_to_label = {0: 'angry', 1: 'fearful', 2: 'happy', 3: 'neutral', 4: 'sad', 5: 'surprised'}
 
-emotion_model = load_model('../saved_models/basicCNN/basicCNN_50_32-1.h5')
+# uncomment if the chosen model includes disgusted
+#class_to_label = {0: 'agry', 1: 'fearful', 2: 'disgusted', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprised'} 
+
+emotion_model = load_model('../saved_models/improved_deepCNN_1.h5')
+
 
 IMG_SIZE = 96
 
@@ -47,7 +49,7 @@ def predict_emotions():
     x, y, w, h = face.left(), face.top(), face.width(), face.height()
     
     # Crop and resize the face
-    face_roi = frame[y:y + h, x:x + w]
+    face_roi = frame[y:(y + h),  x:(x + w)]
     face_roi = cv2.resize(face_roi, (IMG_SIZE, IMG_SIZE))
     face_roi = cv2.cvtColor(face_roi, cv2.COLOR_BGR2GRAY)
     face_roi = np.reshape(face_roi, (IMG_SIZE, IMG_SIZE, 1))
@@ -56,10 +58,11 @@ def predict_emotions():
     prediction = emotion_model.predict(np.array([face_roi]))
     
     top_n_indices = np.argsort(prediction[0])[::-1][:3]
+
     # Retrieve the top N predictions and their corresponding probabilities
     top_n_predictions = [(class_to_label[i], prediction[0][i]) for i in top_n_indices]
     predicted_emotion = class_to_label[np.argmax(prediction)]
-
+    
     # Draw bounding box around the face
     cv2.rectangle(frame, (x, y), (x+w, y+h), emotion_to_color(top_n_predictions[0][0]), 2)
 
