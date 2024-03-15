@@ -8,3 +8,4 @@ tqdm
 matplotlib
 scikit-learn
 tensorflow
+jupyter
