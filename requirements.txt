@@ -1,0 +1,10 @@
+opencv-python
+pillow
+numpy
+dlib
+keras
+tk
+tqdm
+matplotlib
+scikit-learn
+tensorflow
